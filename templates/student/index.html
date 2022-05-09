@@ -39,6 +39,10 @@
                                     {#                                    {% endfor %}</td>#}
 
                                     <td><span>{{ student.course.all | join:"," }}</span></td>
+                                    <td><a href="/student/delete/{{ student.pk }}"
+                                           class="btn btn-sm btn-danger">删除</a>
+                                        <a href="/student/edit/{{ student.pk }}" class="btn btn-sm btn-success">编辑</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>

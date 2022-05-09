@@ -22,3 +22,16 @@ def add_student(request):
 
         Student.objects.create(**request.POST.dict())
         return redirect("/student/index")
+
+
+def delete_student(request, del_id):
+    student = Student.objects.get(pk=del_id)
+    if request.method == "GET":
+        return render(request, "student/del_student.html", {"student": student})
+    else:
+        student.delete()
+        return redirect("/student/index")
+
+
+def edit_student(request, edit_id):
+    return render(request, "student/edit_student.html")
