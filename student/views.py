@@ -34,4 +34,16 @@ def delete_student(request, del_id):
 
 
 def edit_student(request, edit_id):
-    return render(request, "student/edit_student.html")
+    student = Student.objects.get(pk=edit_id)
+    class_list = Clas.objects.all()
+    course_list = Course.objects.all()
+    if request.method == "GET":
+        return render(request, "student/edit_student.html",
+                      {"student": student, "class_list": class_list, "course_list": course_list})
+    else:
+        course_id_list = request.POST.getlist("course_id_list")  # ['1', '5']
+        data = request.POST.dict()
+        data.pop("course_id_list")
+        Student.objects.filter(pk=edit_id).update(**data)
+        student.course.set(course_id_list)
+        return redirect("/student/index")
