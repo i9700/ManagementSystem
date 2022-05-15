@@ -15,9 +15,10 @@ class Student(models.Model):
 
     clas = models.ForeignKey(to="Clas", related_name="student_list", on_delete=models.CASCADE,
                              db_constraint=False)  # 班级关联
-    course = models.ManyToManyField("Course", related_name="students", db_table="db_stu2course",)  # 课程关联
+    course = models.ManyToManyField("Course", related_name="students", db_table="db_stu2course", )  # 课程关联
 
-    stu_detail = models.OneToOneField("StudentDetail", related_name="stu", on_delete=models.CASCADE,)
+    stu_detail = models.OneToOneField("StudentDetail", related_name="stu", on_delete=models.CASCADE, null=True,
+                                      blank=True)
 
     class Meta:
         db_table = "db_student"
@@ -35,6 +36,10 @@ class Clas(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=32, verbose_name="课程名称")
+    credit = models.IntegerField(verbose_name="学分", default=3)
+    teacher = models.CharField(max_length=32, verbose_name="老师", null=True)
+    classTime = models.CharField(max_length=32, verbose_name="上课时间", null=True)
+    classAddr = models.CharField(max_length=32, verbose_name="上课地点", null=True)
 
     class Meta:
         db_table = "db_course"

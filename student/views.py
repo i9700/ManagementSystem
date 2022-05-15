@@ -47,3 +47,17 @@ def edit_student(request, edit_id):
         Student.objects.filter(pk=edit_id).update(**data)
         student.course.set(course_id_list)
         return redirect("/student/index")
+
+
+def elective(request):
+    course_list = Course.objects.all()
+
+    print(request.POST)
+    if request.method == "GET":
+        return render(request, "student/course.html", {"course_list": course_list})
+    else:
+        student_id = 3
+        student = Student.objects.get(pk=student_id)
+        course_id_list = request.POST.getlist("course_id_list")
+        student.course.set(course_id_list)
+        return redirect("/student/index")
