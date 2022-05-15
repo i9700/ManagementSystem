@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views import index, add_student, delete_student, edit_student,elective
+from .views import index, add_student, delete_student, edit_student,elective,search
 
 urlpatterns = [
     path('index/', index),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('elective/', elective),
     re_path('delete/(\d+)', delete_student),
     re_path('edit/(\d+)', edit_student),
+    path('search/', search),
 ]
