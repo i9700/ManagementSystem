@@ -1,7 +1,17 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+import os
 
 
 # Create your models here.
+def user_directory_path(instance, filename):
+    return os.path.join(instance.username, "avatars", filename)
+
+
+class UserInfo(AbstractUser):
+    avatar = models.ImageField(upload_to=user_directory_path, default="/avatar/default.png")
+    stu = models.OneToOneField("Student", on_delete=models.CASCADE, null=True)
+
 
 class Student(models.Model):
     SEX_CHOICES = (

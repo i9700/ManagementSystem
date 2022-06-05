@@ -3,11 +3,21 @@ from .models import *
 from django.db.models import F, Q
 from openpyxl import load_workbook
 import os
+from django.contrib import auth
 
 
 # Create your views here.
 
 def index(request):
+    # (1)视图函数单独判断
+    # if request.user.username:
+    #     student_list = Student.objects.all()
+    #     class_list = Clas.objects.all()
+    #     return render(request, "student/index.html", {"student_list": student_list, "class_list": class_list})
+    # else:
+    #     return redirect("/login/")
+
+    # (2)中间件判断
     student_list = Student.objects.all()
     class_list = Clas.objects.all()
     return render(request, "student/index.html", {"student_list": student_list, "class_list": class_list})
@@ -59,7 +69,7 @@ def elective(request):
     if request.method == "GET":
         return render(request, "student/course.html", {"course_list": course_list})
     else:
-        student_id = 3
+        student_id = request.user.stu_id
         student = Student.objects.get(pk=student_id)
         course_id_list = request.POST.getlist("course_id_list")
         student.course.set(course_id_list)
@@ -131,3 +141,26 @@ def stu_excel(request):
         student_list.append(stu)
     Student.objects.bulk_create(student_list)  # 批量创建，减少撞库
     return redirect("/student/index")
+
+
+def login(request):
+    if request.method == "GET":
+        return render(request, "student/login.html")
+    else:
+        user = request.POST.get("loginUsername")
+        pwd = request.POST.get("loginPassword")
+        # 使用用户认证组件
+        user = auth.authenticate(username=user, password=pwd)
+        if user:
+            # 验证成功
+            # 写session: request.session["user_id] = user.id
+            auth.login(request, user)
+            return redirect("/")
+        else:
+
+            return redirect("/login/")
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect("/login")

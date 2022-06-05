@@ -26,6 +26,7 @@
                                 <tbody>
                                 {% for course in course_list %}
                                     <tr>
+                                        {% csrf_token %}
                                         <td><input type="checkbox" value="{{ course.id }}" name="course_id_list"></td>
                                         <th scope="row">{{ forloop.counter }}</th>
                                         <td>{{ course.title }}</td>
