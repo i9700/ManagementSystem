@@ -1,6 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect
 from .models import *
 from django.db.models import F, Q
+from openpyxl import load_workbook
+import os
 
 
 # Create your views here.
@@ -88,3 +90,44 @@ def search(request):
             student_list = Student.objects.filter(name__contains=key_word)
             return render(request, "student/index.html",
                           {"student_list": student_list, "class_list": class_list, "key_word": key_word})
+
+
+def stu_excel(request):
+    file_obj = request.FILES.get("stu_excel")
+
+    # (1)将上传文件下载到服务器某个文件夹下:
+
+    path = os.path.join('media', 'files', file_obj.name)
+
+    with open(path, "wb") as f:
+        for line in file_obj:
+            f.write(line)
+
+    # (2) 通过python操作excel表格
+    wb = load_workbook(path)
+    work_sheet = wb.worksheets[0]  # 获取第一个sheet对象
+
+    student_list = []
+    for line in work_sheet.iter_rows(min_row=3):
+        print(line)
+        if not line[0].value:
+            break
+
+        # 学生详情记录
+        stu_detail = StudentDetail.objects.create(tel=line[4].value, addr=line[5].value)
+        class_id = Clas.objects.get(name=line[6].value).id
+        sex = line[2].value
+        if sex == "男":
+            sex = 0
+        else:
+            sex = 1
+        stu = Student(name=line[0].value,
+                      age=line[1].value,
+                      sex=sex,
+                      birthday=line[3].value,
+                      stu_detail=stu_detail,
+                      clas_id=class_id,
+                      )
+        student_list.append(stu)
+    Student.objects.bulk_create(student_list)  # 批量创建，减少撞库
+    return redirect("/student/index")

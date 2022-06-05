@@ -1,4 +1,9 @@
 {% extends "student/base.html" %}
+{% block css %}
+    <style>
+
+    </style>
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
@@ -12,7 +17,14 @@
                     <div class="row">
 
                         <div class="col-md-2"><a href="/student/add/" class="btn btn-md btn-success">添加学生</a></div>
-
+                        <div class="col-md-4">
+                            <form action="/student/stu_excel/" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <span><input type="file" class="file" name="stu_excel"></span>
+                                <span><input type="submit" class="file_btn btn btn-md btn-info"
+                                             value="批量导入"></span>
+                            </form>
+                        </div>
                         <div class="col-md-6">
                             <form action="/student/search/" method="post" class="row">
                                 <span style="line-height: 32px">姓名:</span>&nbsp;&nbsp;
